@@ -4,12 +4,13 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkMax;
+import com.ctre.phoenix.sensors.CANCoder;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.AlternateEncoderConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -19,12 +20,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.CANSparkMaxUtil;
 import frc.robot.Constants;
-import frc.robot.CANSparkMaxUtil.Usage;
 
-import com.ctre.phoenix.sensors.CANCoder;
-import com.ctre.phoenix6.hardware.CANcoder;
 
 /** Add your docs here. */
 public class SwerveModule {
@@ -38,7 +35,6 @@ public class SwerveModule {
     private final SparkMax driveMotor;
     private final SparkMax turningMotor;
     private final SparkMaxConfig turn_config;
-    private final AlternateEncoderConfig turn_encoder_config;
     private final SparkMaxConfig drive_config;
 
     private final RelativeEncoder driveEncoder;
@@ -75,10 +71,11 @@ public class SwerveModule {
             .inverted(true)
             .idleMode(IdleMode.kBrake)
             .smartCurrentLimit(20)
-            .voltageCompensation(12)
-            .setBusUsage();
+            .voltageCompensation(12);
         this.turn_config.encoder
             .positionConversionFactor(Constants.turningMotorPosFactor);
+        this.turn_config.signals
+            .externalOrAltEncoderPosition(500);
 
         //this.turningMotor.restoreFactoryDefaults(); //as name implies  
         //this.turningMotor.setIdleMode(com.revrobotics.CANSparkBase.IdleMode.kBrake); 
@@ -91,13 +88,14 @@ public class SwerveModule {
         this.turningEncoder = this.turningMotor.getAlternateEncoder();
         //this.turningEncoder.setPositionConversionFactor(Constants.turningMotorPosFactor); 
         //adjusts the position values of the turning motor by a certain value, in this case to convert to degrees (ish)
-        
+        this.turningMotor.configure(turn_config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         //turningPID = turningMotor.getPIDController();
 
         this.turningPID = new PIDController(Constants.turningkP, Constants.turningkI, Constants.turningkD); //creates a new PID Controller and sets values
         // this.turningPID.enableContinuousInput(-180, 180);
         
-        CANSparkMaxUtil.setCANSparkMaxBusUsage(this.turningMotor, Usage.kPositionOnly);
+        //replaced by turn_config.signals.externaloraltencoderposiiton
+        //CANSparkMaxUtil.setCANSparkMaxBusUsage(this.turningMotor, Usage.kPositionOnly);
         
         //turningPID.setP(Constants.turningkP);
         //turningPID.setI(Constants.turningkI);
@@ -105,19 +103,32 @@ public class SwerveModule {
         //turningPID.setFF(0);
         //resetToAbsolute();
 
-        this.driveMotor = new CANSparkMax(driveMotorId, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
-        this.driveMotor.restoreFactoryDefaults();
-        this.driveMotor.setSmartCurrentLimit(50);
-        this.driveMotor.enableVoltageCompensation(12);
-        this.driveMotor.setIdleMode(com.revrobotics.CANSparkBase.IdleMode.kBrake);
-        this.driveMotor.setInverted(false);
-        this.driveMotor.burnFlash();
+        this.driveMotor = new SparkMax(driveMotorId, MotorType.kBrushless);
+        this.drive_config = new SparkMaxConfig();
+
+        this.drive_config
+            .inverted(false)
+            .idleMode(IdleMode.kBrake)
+            .smartCurrentLimit(50)
+            .voltageCompensation(12);
+        this.drive_config.encoder
+            .positionConversionFactor(Constants.driveMotorPosFactor)
+            .velocityConversionFactor(Constants.driveMotorVelFactor);
+
+        //this.driveMotor.restoreFactoryDefaults();
+        //this.driveMotor.setSmartCurrentLimit(50);
+        //this.driveMotor.enableVoltageCompensation(12);
+        //this.driveMotor.setIdleMode(com.revrobotics.CANSparkBase.IdleMode.kBrake);
+        //this.driveMotor.setInverted(false);
+        //this.driveMotor.burnFlash();
 
 
-        this.driveEncoder = this.driveMotor.getEncoder();
-        this.driveEncoder.setPositionConversionFactor(Constants.driveMotorPosFactor);
-        this.driveEncoder.setVelocityConversionFactor(Constants.driveMotorVelFactor);
+        this.driveEncoder = this.driveMotor.getAlternateEncoder();
+        //this.driveEncoder.setPositionConversionFactor(Constants.driveMotorPosFactor);
+        //this.driveEncoder.setVelocityConversionFactor(Constants.driveMotorVelFactor);
         this.driveEncoder.setPosition(0);
+
+        this.driveMotor.configure(drive_config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         this.drivePID = new PIDController(Constants.drivekP, Constants.drivekI, Constants.drivekD);
 
