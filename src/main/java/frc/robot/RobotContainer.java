@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.commands.Drive;
+import frc.robot.commands.HorizontalDrive;
 import frc.robot.subsystems.SwerveDrive;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -33,6 +34,10 @@ public class RobotContainer {
    private final Joystick operatorR = new Joystick(3);
 
   private final JoystickButton resetYawButton = new JoystickButton(driverL, 1);
+
+  //operator r
+  //button 1
+  private final JoystickButton horizontal_drive_button = new JoystickButton(operatorR, 1);
   
   //TODO: Bind climberBackButton
   //CLIMBBUTTON
@@ -113,7 +118,7 @@ public class RobotContainer {
     //alignButton.onTrue(new PodiumAlignment(driveSwerve, driverL, driverR, camera.getError(), this.camera));
     
      
-
+    horizontal_drive_button.whileTrue(new HorizontalDrive(this.driveSwerve, operatorR));
 
 
     

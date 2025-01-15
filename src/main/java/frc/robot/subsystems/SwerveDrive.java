@@ -8,6 +8,7 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -26,6 +27,7 @@ import frc.robot.Constants;
 public class SwerveDrive extends SubsystemBase {
   /** Creates a new SwerveDrive. */
   private SwerveDriveOdometry odometry;
+  private SwerveDrivePoseEstimator pose_estimator;
   private Field2d field;
   private double yaw;
   private final SwerveModule[] dt;
@@ -60,6 +62,9 @@ public class SwerveDrive extends SubsystemBase {
     odometry = new SwerveDriveOdometry(Constants.SwerveMap, getYaw(), new SwerveModulePosition[] {dt[0].getPosition(),
        dt[1].getPosition(), dt[2].getPosition(), dt[3].getPosition()
     }); 
+
+    pose_estimator = new SwerveDrivePoseEstimator(Constants.SwerveMap, getYaw(), new SwerveModulePosition[] {dt[0].getPosition(),
+      dt[1].getPosition(), dt[2].getPosition(), dt[3].getPosition()}, new Pose2d());
 
     this.driverL = driverL;
     this.driverR = driverR;

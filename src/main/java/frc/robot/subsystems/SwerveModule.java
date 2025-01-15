@@ -19,6 +19,7 @@ import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 
@@ -85,7 +86,7 @@ public class SwerveModule {
         //this.turningMotor.burnFlash(); no substitute
     
     
-        this.turningEncoder = this.turningMotor.getAlternateEncoder();
+        this.turningEncoder = this.turningMotor.getEncoder();
         //this.turningEncoder.setPositionConversionFactor(Constants.turningMotorPosFactor); 
         //adjusts the position values of the turning motor by a certain value, in this case to convert to degrees (ish)
         this.turningMotor.configure(turn_config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -123,7 +124,7 @@ public class SwerveModule {
         //this.driveMotor.burnFlash();
 
 
-        this.driveEncoder = this.driveMotor.getAlternateEncoder();
+        this.driveEncoder = this.driveMotor.getEncoder();
         //this.driveEncoder.setPositionConversionFactor(Constants.driveMotorPosFactor);
         //this.driveEncoder.setVelocityConversionFactor(Constants.driveMotorVelFactor);
         this.driveEncoder.setPosition(0);
@@ -220,8 +221,10 @@ public class SwerveModule {
 
             //double driveAutoMotorVoltage = feedForward.calculate(desiredState.speedMetersPerSecond) + drivePID.calculate(driveEncoder.getVelocity(), desiredState.speedMetersPerSecond);
 
-
-            driveMotor.setVoltage(invertDriveMotor ? driveAutoMotorVoltage * -1 : driveAutoMotorVoltage);
+            
+            double drive_motor_volt_out = desiredState.speedMetersPerSecond / Constants.maxSpeed;
+            driveMotor.setVoltage(invertDriveMotor ? drive_motor_volt_out * -1 : drive_motor_volt_out);
+            SmartDashboard.putNumber("drive motor volt out", drive_motor_volt_out);
         }
 
     
