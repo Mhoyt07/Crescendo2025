@@ -282,7 +282,14 @@ public final class Constants {
 
 
   public static class vision {
-    public static final double kp = 1;
+    //limelight FOV 80x54
+    //x
+    public static final double width = 80;
+    //y
+    public static final double height = 54;
+    //max voltage for horizontal allignment
+    public static final double max_speed = maxSpeed / 4;
+    public static final double kp = 2 / width * max_speed;
     public static final double ki = 0;
     public static final double kd = 0;
   }

@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -23,13 +24,19 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.LimelightHelpers;
+import frc.robot.LimelightHelpers.LimelightTarget_Barcode;
 
 public class SwerveDrive extends SubsystemBase {
   /** Creates a new SwerveDrive. */
   private SwerveDriveOdometry odometry;
   private SwerveDrivePoseEstimator pose_estimator;
   private Field2d field;
+  private Field2d field_pe;
+  private LimelightHelpers.PoseEstimate mt2;
   private double yaw;
+  private double[] xyz_dps;
+  private boolean reject_update;
   private final SwerveModule[] dt;
   private final PigeonIMU gyro = new PigeonIMU(10);
   public final PIDController alignPID = new PIDController(Constants.alignkP, 0, 0);
@@ -73,6 +80,9 @@ public class SwerveDrive extends SubsystemBase {
     resetToAbsolute2();
 
     field = new Field2d();
+    field_pe = new Field2d();
+
+    xyz_dps = new double[3];
 
   }
 
@@ -133,8 +143,17 @@ public class SwerveDrive extends SubsystemBase {
     return odometry.getPoseMeters();
   }
 
+  public Pose2d get_pe_pose() {
+    return pose_estimator.getEstimatedPosition();
+  }
+
   public void zeroGyro() {
     gyro.setYaw(0);
+  }
+
+  public double yaw_rate() {
+    gyro.getRawGyro(xyz_dps);
+    return xyz_dps[2];
   }
 
   public void zeroGyroAuto(double zeroPos) {
@@ -155,11 +174,38 @@ public class SwerveDrive extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    
+    //odometry
     odometry.update(getYaw(), new SwerveModulePosition[] {dt[0].getPosition(),
       dt[1].getPosition(), dt[2].getPosition(), dt[3].getPosition()
    });
-    field.setRobotPose(getPose());
+   field.setRobotPose(getPose());
+
+    //pose estimator
+    pose_estimator.update(getYaw(), new SwerveModulePosition[] {dt[0].getPosition(), dt[1].getPosition(), dt[2].getPosition(), dt[3].getPosition()});
+    //updates the robot orientation for megatag2
+    LimelightHelpers.SetRobotOrientation("limelight", pose_estimator.getEstimatedPosition().getRotation().getDegrees(), yaw_rate(), 0, 0, 0, 0);
+    mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+    if (yaw_rate() > 720) {
+      reject_update = true;
+    } else if (mt2.tagCount == 0) {
+      reject_update = true;
+    } else {
+      reject_update = false;
+    } if (reject_update == false) {
+      pose_estimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
+      pose_estimator.addVisionMeasurement(
+        mt2.pose,
+        mt2.timestampSeconds);
+    }
+    SmartDashboard.putBoolean("Reject Update", reject_update);
+
+    field_pe.setRobotPose(get_pe_pose());
+
+    //puts fields on the shuffleboard
+    SmartDashboard.putData("Odometry Field", field);
+    SmartDashboard.putData("Pose Estimator Field", field_pe);
+
+
     for (SwerveModule module : dt) {
       SmartDashboard.putNumber(
           "Mod " + module.moduleNumber + " Cancoder", module.getCANCoder().getDegrees());
@@ -173,8 +219,6 @@ public class SwerveDrive extends SubsystemBase {
       // SmartDashboard.putNumber("Joystick2 Y", this.driverR.getRawAxis(1));
       SmartDashboard.putNumber("Gyro Yaw", getYaw().getDegrees()%360);
       SmartDashboard.putNumber("Joystick Hat", this.driverL.getPOV());
-      
-      
 
 
 

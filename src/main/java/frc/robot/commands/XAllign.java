@@ -7,6 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.SwerveDrive;
@@ -30,13 +31,16 @@ public class XAllign extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    this.vis.set_target(2);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    volt = MathUtil.clamp(this.pid.calculate(this.vis.x_offset(), 0), -3, 3);
-    //this.dt.drive(new Translation2d(0, volt), 0, false, true);
+    volt = MathUtil.clamp(this.pid.calculate(this.vis.x_offset(), 0), -Constants.vision.max_speed, Constants.vision.max_speed);
+    SmartDashboard.putNumber("Volt", volt);
+    this.dt.drive(new Translation2d(0, volt), 0, false, true);
   }
 
   // Called once the command ends or is interrupted.
@@ -46,10 +50,6 @@ public class XAllign extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (this.vis.x_offset() == 0) {
-      return true;
-    } else {
-      return false;
-    }
+    return false;
   }
 }
