@@ -41,6 +41,7 @@ public class Vision extends SubsystemBase {
     SmartDashboard.putNumber("x offset", x_offset());
     //gets target. tbh don't think this works
     SmartDashboard.putNumber("Priority id", priority_id.getDouble(0));
+
     
   }
 }

@@ -7,7 +7,9 @@ package frc.robot;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.commands.Drive;
 import frc.robot.commands.HorizontalDrive;
+import frc.robot.commands.XAllign;
 import frc.robot.subsystems.SwerveDrive;
+import frc.robot.subsystems.Vision;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -38,6 +40,8 @@ public class RobotContainer {
   //operator r
   //button 1
   private final JoystickButton horizontal_drive_button = new JoystickButton(operatorR, 1);
+  //button 2
+  private final JoystickButton x_allign_button = new JoystickButton(operatorR, 2);
   
   //TODO: Bind climberBackButton
   //CLIMBBUTTON
@@ -53,6 +57,7 @@ public class RobotContainer {
   
 
   public final SwerveDrive driveSwerve;
+  public final Vision vision = new Vision();
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   
   
@@ -119,6 +124,7 @@ public class RobotContainer {
     
      
     horizontal_drive_button.whileTrue(new HorizontalDrive(this.driveSwerve, operatorR));
+    x_allign_button.whileTrue(new XAllign(this.driveSwerve, vision));
 
 
     

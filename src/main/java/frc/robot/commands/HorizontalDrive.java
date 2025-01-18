@@ -30,8 +30,8 @@ public class HorizontalDrive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    volt = this.operator_r.getX();
-    this.dt.drive(new Translation2d(volt, 0), 0, false, true);
+    volt = this.operator_r.getX() * 3;
+    this.dt.drive(new Translation2d(0, volt), 0, false, true);
     SmartDashboard.putNumber("X Volt", volt);
   }
 

@@ -68,32 +68,32 @@ public final class Constants {
   //module 3 constants: Front Left    Module 0???                //MG    //PC
 
    //module 20 -> 21 ->23 -> 33
-  public static final int mod0DriveMotor = 37;//59  //36  //54    //37 //59    //10
-  public static final int mod0TurningMotor = 60; //55//52  //58   //60  //55    //11
+  public static final int mod0DriveMotor = 55;//59  //36  //54    //37 //59    //10
+  public static final int mod0TurningMotor = 59; //55//52  //58   //60  //55    //11
   public static final int mod0CANCoder = 3; //7  //6 //5      //3   //2
   public static final Rotation2d mod0TurningOffset = Rotation2d.fromDegrees(148.2);//226.0//271.2//67.3 //148.2
 
-  //module 21 -> 23 -> 20 ->31
+  //module 21 -> 23 -> 20 ->31->34
   //module 0 constants: Front Right Module 1????
-  public static final int mod1DriveMotor = 39;//54 //59 //36  //39   //58    //9
-  public static final int mod1TurningMotor = 32;//58//5 //52 //32     //54    //8
-  public static final int mod1CANCoder = 1; //5 //7  //6  //1  //0       //0
-  public static final Rotation2d mod1TurningOffset = Rotation2d.fromDegrees(187.3);//67.3//226.0 //271.2 //97.3
+  public static final int mod1DriveMotor = 54;//39//54 //59 //36  //39   //58    //9
+  public static final int mod1TurningMotor = 58;//32//58//5 //52 //32     //54    //8
+  public static final int mod1CANCoder = 8; //1//5 //7  //6  //1  //0       //0
+  public static final Rotation2d mod1TurningOffset = Rotation2d.fromDegrees(339.3);//97.3/187.3//67.3//226.0 //271.2 //97.3
 
   //mod22 ->32
   //module 2 constants: Back Left
-  public static final int mod2DriveMotor = 45;  //53   //45   //53    //12
-  public static final int mod2TurningMotor = 40; //61  //43     //61    //13
+  public static final int mod2DriveMotor = 53;  //53   //45   //53    //12
+  public static final int mod2TurningMotor = 61; //61  //43     //61    //13
   public static final int mod2CANCoder = 2;      //4   //2       //1
   public static final Rotation2d mod2TurningOffset = Rotation2d.fromDegrees(166.1); //103.8 //166.1
 
 
-  //mod23 -> 20 ->21 ->34
+  //mod23 -> 20 ->21 ->34->31
   //module 1 constants: Back Right mod 3???
-  public static final int mod3DriveMotor = 42;//36 //54 //59   //42  //36    //9
-  public static final int mod3TurningMotor = 31;  //52//58 //55 //31   //52    //8
-  public static final int mod3CANCoder = 8;//6 //5 //7 //8    //1       //3
-  public static final Rotation2d mod3TurningOffset = Rotation2d.fromDegrees(69.3); //271.2//67.3  //226.0 //156.8
+  public static final int mod3DriveMotor = 36;//42//36 //54 //59   //42  //36    //9
+  public static final int mod3TurningMotor = 52; //31 //52//58 //55 //31   //52    //8
+  public static final int mod3CANCoder = 1;//8//6 //5 //7 //8    //1       //3
+  public static final Rotation2d mod3TurningOffset = Rotation2d.fromDegrees(187.3); //69.3//271.2//67.3  //226.0 //156.8
 
 
   //PID Constants

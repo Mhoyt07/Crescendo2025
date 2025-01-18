@@ -8,6 +8,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.SwerveDrive;
@@ -75,6 +76,9 @@ public class Drive extends Command {
       rotationValue * Constants.maxAngularVelocity, true, 
       false
     );
+    SmartDashboard.putNumber("Translation Value", translationValue);
+    SmartDashboard.putNumber("Strafe Value", strafeValue);
+    SmartDashboard.putNumber("Rotation Value", rotationValue);
     
 
   }

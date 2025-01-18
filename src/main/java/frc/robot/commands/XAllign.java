@@ -36,7 +36,7 @@ public class XAllign extends Command {
   @Override
   public void execute() {
     volt = MathUtil.clamp(this.pid.calculate(this.vis.x_offset(), 0), -3, 3);
-    this.dt.drive(new Translation2d(volt, 0), 0, false, true);
+    //this.dt.drive(new Translation2d(0, volt), 0, false, true);
   }
 
   // Called once the command ends or is interrupted.
